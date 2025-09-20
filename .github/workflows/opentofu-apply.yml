@@ -1,0 +1,52 @@
+name: OpenTofu Apply - 🦁🙈
+
+on:
+  workflow_dispatch:
+
+jobs:
+  opentofu-apply:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Authenticate to AWS
+        id: aws-auth
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Verify AWS Identity
+        run: aws sts get-caller-identity
+        
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: "1.7.0"
+
+      - name: OpenTofu Init
+        run: tofu -chdir=terraform init -backend-config=backend-config.tfvars
+        continue-on-error: false
+
+      - name: OpenTofu Apply
+        run: tofu -chdir=terraform apply  -auto-approve
+        continue-on-error: false
+        id: apply
+
+      - name: Apply Status
+        if: steps.apply.outcome == 'failure'
+        run: |
+          echo "❌ OpenTofu apply failed!"
+          exit 1
+        continue-on-error: false
+
+      - name: Apply Summary
+        if: steps.apply.outcome == 'success'
+        run: |
+          echo "✅ OpenTofu apply completed successfully!"
+

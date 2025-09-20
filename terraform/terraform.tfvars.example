@@ -1,0 +1,14 @@
+# Example Terraform variables file
+# Copy this file to terraform.tfvars and update the values
+
+# REQUIRED: AWS Key Pair name (must exist in ap-south-1 region)
+key_pair_name = "your-key-pair-name"
+
+# Optional: Override default values if needed
+# vpc_cidr = "10.0.0.0/16"
+# public_subnet_cidr = "10.0.1.0/24"
+# availability_zone = "ap-south-1a"
+# instance_type = "t3.medium"
+# ami_id = "ami-0f5ee92e2d63afc18"
+# project_name = "kube-hard-way"
+# environment = "dev"

@@ -1,0 +1,61 @@
+name: OpenTofu Plan - 🐘
+
+on:
+  workflow_dispatch:
+
+jobs:
+  opentofu-plan:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Authenticate to AWS
+        id: aws-auth
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Verify AWS Identity
+        run: aws sts get-caller-identity
+        
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: "1.7.0"
+
+      - name: OpenTofu Format Check
+        run: tofu -chdir=terraform fmt -check -recursive
+
+      - name: OpenTofu Init
+        run: tofu -chdir=terraform init -backend-config=backend-config.tfvars
+        continue-on-error: false
+
+      - name: OpenTofu Validate
+        run: tofu -chdir=terraform validate
+        continue-on-error: false
+
+      - name: OpenTofu Plan
+        run: tofu -chdir=terraform plan -detailed-exitcode
+        continue-on-error: false
+        id: plan
+
+      - name: Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: |
+          echo "❌ OpenTofu plan failed!"
+          exit 1
+        continue-on-error: false
+
+      - name: Plan Summary
+        if: steps.plan.outcome == 'success'
+        run: |
+          echo "✅ OpenTofu plan completed successfully!"
+          echo "Review the plan output above to ensure changes are as expected."
+          echo ""
+          echo "To apply these changes, run the 'OpenTofu Apply' workflow."
