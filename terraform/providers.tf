@@ -10,7 +10,6 @@ terraform {
 
 # Default provider for Mumbai region (ap-south-1)
 provider "aws" {
-  region = "ap-south-1" # Mumbai region
 }
 
 # Provider for us-east-1 (required for CloudFront, ACM, IAM, etc.)
