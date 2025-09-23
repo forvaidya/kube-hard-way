@@ -2,7 +2,7 @@
 # Copy this file to terraform.tfvars and update the values
 
 # REQUIRED: AWS Key Pair name (must exist in ap-south-1 region)
-key_pair_name = "your-key-pair-name"
+key_pair_name = "rpm_2025"
 
 # Optional: Override default values if needed
 # vpc_cidr = "10.0.0.0/16"
