@@ -73,8 +73,8 @@ After cluster is Ready: quick webserver test (nginx)
 kubectl create deploy nginx --image=nginx:1.25
 kubectl expose deploy nginx --port=80 --type=NodePort
 kubectl get svc nginx -o wide
-# then curl http://<any_worker_private_ip>:<nodePort>  (from within VPC)
-# for public access, add an ALB/NLB or an Ingress Controller + ALB.
+then curl http://<any_worker_private_ip>:<nodePort>  (from within VPC)
+for public access, add an ALB/NLB or an Ingress Controller + ALB.
 
 
 
