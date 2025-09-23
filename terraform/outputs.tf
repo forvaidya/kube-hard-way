@@ -86,11 +86,6 @@ output "apiserver_private_ip" {
   value       = aws_instance.apiserver.private_ip
 }
 
-output "apiserver_public_ip" {
-  description = "Public IP address of the API server (Elastic IP)"
-  value       = aws_eip.apiserver.public_ip
-}
-
 output "apiserver_instance_id" {
   description = "Instance ID of the API server"
   value       = aws_instance.apiserver.id
@@ -101,11 +96,6 @@ output "node1_private_ip" {
   value       = aws_instance.node1.private_ip
 }
 
-output "node1_public_ip" {
-  description = "Public IP address of node1 (Elastic IP)"
-  value       = aws_eip.node1.public_ip
-}
-
 output "node1_instance_id" {
   description = "Instance ID of node1"
   value       = aws_instance.node1.id
@@ -114,11 +104,6 @@ output "node1_instance_id" {
 output "node2_private_ip" {
   description = "Private IP address of node2 (fixed)"
   value       = aws_instance.node2.private_ip
-}
-
-output "node2_public_ip" {
-  description = "Public IP address of node2 (Elastic IP)"
-  value       = aws_eip.node2.public_ip
 }
 
 output "node2_instance_id" {
@@ -136,18 +121,17 @@ output "security_group_id" {
 output "ssh_connection_info" {
   description = "SSH connection information for all instances"
   value = {
-    # Direct SSH access via Elastic IPs
+    # Direct SSH access to web server via Elastic IP
     web_server_ssh = "ssh -i ~/.ssh/your-key.pem ubuntu@${aws_eip.web_server.public_ip}"
-    apiserver_ssh  = "ssh -i ~/.ssh/your-key.pem ubuntu@${aws_eip.apiserver.public_ip}"
-    node1_ssh      = "ssh -i ~/.ssh/your-key.pem ubuntu@${aws_eip.node1.public_ip}"
-    node2_ssh      = "ssh -i ~/.ssh/your-key.pem ubuntu@${aws_eip.node2.public_ip}"
-
-    # Fixed private IPs for internal communication
-    apiserver_private_ip = aws_instance.apiserver.private_ip
-    node1_private_ip     = aws_instance.node1.private_ip
-    node2_private_ip     = aws_instance.node2.private_ip
+    
+    # Private subnet instances accessible via SSM Session Manager or through bastion
+    note = "API server and worker nodes are in private subnets with fixed private IPs but no public IPs"
+    apiserver_private_ip  = aws_instance.apiserver.private_ip
+    node1_private_ip      = aws_instance.node1.private_ip
+    node2_private_ip      = aws_instance.node2.private_ip
     web_server_private_ip = aws_instance.web_server.private_ip
-    note                 = "All instances now have both fixed private IPs and static public IPs via Elastic IPs"
+    
+    access_note = "Use SSM Session Manager (aws ssm start-session --target <instance-id>) or SSH through web server as bastion to access private instances"
   }
 }
 
@@ -204,22 +188,26 @@ output "fixed_ip_summary" {
       private_ip = "10.0.2.10"
       public_ip  = aws_eip.web_server.public_ip
       instance_id = aws_instance.web_server.id
+      subnet = "public"
     }
     apiserver = {
       private_ip = "10.0.3.10"
-      public_ip  = aws_eip.apiserver.public_ip
+      public_ip  = "none (private subnet)"
       instance_id = aws_instance.apiserver.id
+      subnet = "private"
     }
     node1 = {
       private_ip = "10.0.3.20"
-      public_ip  = aws_eip.node1.public_ip
+      public_ip  = "none (private subnet)"
       instance_id = aws_instance.node1.id
+      subnet = "private"
     }
     node2 = {
       private_ip = "10.0.4.20"
-      public_ip  = aws_eip.node2.public_ip
+      public_ip  = "none (private subnet)"
       instance_id = aws_instance.node2.id
+      subnet = "private"
     }
-    note = "All instances have reserved static private and public IP addresses"
+    note = "Web server has reserved public and private IPs. Private subnet instances have only fixed private IPs."
   }
 }
