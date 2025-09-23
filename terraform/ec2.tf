@@ -16,12 +16,15 @@ data "aws_ami" "ubuntu" {
 
 # Public Web Server / Load Balancer
 resource "aws_instance" "web_server" {
-  ami                         = var.ami_id
-  instance_type               = var.instance_type
-  key_name                    = var.key_pair_name
-  vpc_security_group_ids      = [aws_security_group.web_server.id]
-  subnet_id                   = aws_subnet.public_2.id
-  associate_public_ip_address = true
+  ami                  = var.ami_id
+  instance_type        = var.instance_type
+  key_name             = var.key_pair_name
+  iam_instance_profile = aws_iam_instance_profile.ec2_ssm_instance_profile.name
+
+  # Use the pre-created network interface with fixed IP
+  vpc_security_group_ids = [aws_security_group.web_server.id]
+  subnet_id              = aws_subnet.public_2.id
+  private_ip             = "10.0.2.10"
 
   root_block_device {
     volume_type = "gp3"
@@ -33,6 +36,11 @@ resource "aws_instance" "web_server" {
     #!/bin/bash
     apt-get update
     apt-get install -y curl wget vim nginx apt-transport-https ca-certificates gnupg
+    
+    # Install and start SSM agent
+    snap install amazon-ssm-agent --classic
+    systemctl enable snap.amazon-ssm-agent.amazon-ssm-agent.service
+    systemctl start snap.amazon-ssm-agent.amazon-ssm-agent.service
     
     # Install kubectl
     curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
@@ -57,28 +65,17 @@ resource "aws_instance" "web_server" {
   }
 }
 
-# Elastic IP for Web Server
-resource "aws_eip" "web_server" {
-  instance = aws_instance.web_server.id
-  domain   = "vpc"
-
-  tags = {
-    Name        = "${var.project_name}-web-server-eip"
-    Environment = var.environment
-    Project     = var.project_name
-  }
-
-  depends_on = [aws_internet_gateway.main]
-}
-
 # API Server (Master Node)
 resource "aws_instance" "apiserver" {
-  ami                         = var.ami_id
-  instance_type               = var.instance_type
-  key_name                    = var.key_pair_name
-  vpc_security_group_ids      = [aws_security_group.kubernetes_nodes.id]
-  subnet_id                   = aws_subnet.private_1.id
-  associate_public_ip_address = false
+  ami                  = var.ami_id
+  instance_type        = var.instance_type
+  key_name             = var.key_pair_name
+  iam_instance_profile = aws_iam_instance_profile.ec2_ssm_instance_profile.name
+
+  # Use fixed private IP
+  vpc_security_group_ids = [aws_security_group.kubernetes_nodes.id]
+  subnet_id              = aws_subnet.private_1.id
+  private_ip             = "10.0.3.10"
 
   root_block_device {
     volume_type = "gp3"
@@ -90,6 +87,11 @@ resource "aws_instance" "apiserver" {
     #!/bin/bash
     apt-get update
     apt-get install -y curl wget vim apt-transport-https ca-certificates gnupg socat conntrack ipset
+    
+    # Install and start SSM agent
+    snap install amazon-ssm-agent --classic
+    systemctl enable snap.amazon-ssm-agent.amazon-ssm-agent.service
+    systemctl start snap.amazon-ssm-agent.amazon-ssm-agent.service
     
     # Install kubectl
     curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
@@ -118,12 +120,15 @@ resource "aws_instance" "apiserver" {
 
 # Worker Node 1
 resource "aws_instance" "node1" {
-  ami                         = var.ami_id
-  instance_type               = var.instance_type
-  key_name                    = var.key_pair_name
-  vpc_security_group_ids      = [aws_security_group.kubernetes_nodes.id]
-  subnet_id                   = aws_subnet.private_1.id
-  associate_public_ip_address = false
+  ami                  = var.ami_id
+  instance_type        = var.instance_type
+  key_name             = var.key_pair_name
+  iam_instance_profile = aws_iam_instance_profile.ec2_ssm_instance_profile.name
+
+  # Use fixed private IP
+  vpc_security_group_ids = [aws_security_group.kubernetes_nodes.id]
+  subnet_id              = aws_subnet.private_1.id
+  private_ip             = "10.0.3.20"
 
   root_block_device {
     volume_type = "gp3"
@@ -135,6 +140,11 @@ resource "aws_instance" "node1" {
     #!/bin/bash
     apt-get update
     apt-get install -y curl wget vim apt-transport-https ca-certificates gnupg socat conntrack ipset
+    
+    # Install and start SSM agent
+    snap install amazon-ssm-agent --classic
+    systemctl enable snap.amazon-ssm-agent.amazon-ssm-agent.service
+    systemctl start snap.amazon-ssm-agent.amazon-ssm-agent.service
     
     # Install kubectl
     curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
@@ -163,12 +173,15 @@ resource "aws_instance" "node1" {
 
 # Worker Node 2
 resource "aws_instance" "node2" {
-  ami                         = var.ami_id
-  instance_type               = var.instance_type
-  key_name                    = var.key_pair_name
-  vpc_security_group_ids      = [aws_security_group.kubernetes_nodes.id]
-  subnet_id                   = aws_subnet.private_2.id
-  associate_public_ip_address = false
+  ami                  = var.ami_id
+  instance_type        = var.instance_type
+  key_name             = var.key_pair_name
+  iam_instance_profile = aws_iam_instance_profile.ec2_ssm_instance_profile.name
+
+  # Use fixed private IP
+  vpc_security_group_ids = [aws_security_group.kubernetes_nodes.id]
+  subnet_id              = aws_subnet.private_2.id
+  private_ip             = "10.0.4.20"
 
   root_block_device {
     volume_type = "gp3"
@@ -180,6 +193,11 @@ resource "aws_instance" "node2" {
     #!/bin/bash
     apt-get update
     apt-get install -y curl wget vim apt-transport-https ca-certificates gnupg socat conntrack ipset
+    
+    # Install and start SSM agent
+    snap install amazon-ssm-agent --classic
+    systemctl enable snap.amazon-ssm-agent.amazon-ssm-agent.service
+    systemctl start snap.amazon-ssm-agent.amazon-ssm-agent.service
     
     # Install kubectl
     curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
