@@ -1,10 +1,59 @@
+# Security Group for Web Server
+resource "aws_security_group" "web_server" {
+  name        = "${var.project_name}-web-server"
+  description = "Security group for web server with HTTP, HTTPS, and SSH access"
+  vpc_id      = aws_vpc.main.id
+
+  # SSH access from internet
+  ingress {
+    description = "SSH"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # HTTP access from internet
+  ingress {
+    description = "HTTP"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # HTTPS access from internet
+  ingress {
+    description = "HTTPS"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # All outbound traffic
+  egress {
+    description = "All outbound traffic"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name        = "${var.project_name}-web-server-sg"
+    Environment = var.environment
+    Project     = var.project_name
+  }
+}
+
 # Security Group for Kubernetes nodes
 resource "aws_security_group" "kubernetes_nodes" {
   name        = "${var.project_name}-kubernetes-nodes"
   description = "Security group for Kubernetes master and worker nodes"
   vpc_id      = aws_vpc.main.id
 
-  # SSH access
+  # SSH access from internet
   ingress {
     description = "SSH"
     from_port   = 22
