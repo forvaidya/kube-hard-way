@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-red
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flask-red
+  template:
+    metadata:
+      labels:
+        app: flask-red
+    spec:
+      containers:
+      - name: flask-red
+        image: rsiddapp/flask-red:latest
+        ports:
+        - containerPort: 5000
