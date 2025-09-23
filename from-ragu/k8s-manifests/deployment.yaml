@@ -15,8 +15,8 @@ spec:
       containers:
       - name: flask-red
         image: rsiddapp/flask-red:latest
-        ports:
-        - containerPort: 5000
+  ports:
+  - containerPort: 8000
 
 ---
 apiVersion: apps/v1
@@ -36,5 +36,5 @@ spec:
       containers:
       - name: flask-green
         image: rsiddapp/flask-green:latest
-        ports:
-        - containerPort: 5000
+  ports:
+  - containerPort: 8000
