@@ -1,0 +1,13 @@
+services:
+  hello-green:
+    image: rsiddapp/flask-hello:latest
+    ports: ["8091:5000"]
+    environment:
+      TEXT_COLOR: "green"
+      HELLO_MSG: "Hello World"
+  hello-red:
+    image: rsiddapp/flask-hello:latest
+    ports: ["8092:5000"]
+    environment:
+      TEXT_COLOR: "red"
+      HELLO_MSG: "Namaste Raghu"

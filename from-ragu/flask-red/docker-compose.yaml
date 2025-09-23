@@ -1,0 +1,18 @@
+services:
+  hello-green:
+    image: flask-hello
+    build: .
+    ports:
+      - "5001:5000"
+    environment:
+      TEXT_COLOR: "green"
+      HELLO_MSG: "Hello World"
+
+  hello-red:
+    image: flask-hello
+    build: .
+    ports:
+      - "5002:5000"
+    environment:
+      TEXT_COLOR: "red"
+      HELLO_MSG: "Namaste Raghu"

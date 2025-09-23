@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.env
+
+# Docker
+*.log
+compose.yaml   # avoid the UTF-16 trap
+# OS
+.DS_Store
+Thumbs.db
+
