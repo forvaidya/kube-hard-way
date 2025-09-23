@@ -118,13 +118,13 @@ output "ssh_connection_info" {
   value = {
     # Direct SSH access to public web server
     web_server_ssh = "ssh -i ~/.ssh/your-key.pem ubuntu@${aws_eip.web_server.public_ip}"
-    
+
     # Private K8s nodes - accessible via NAT Gateway for outbound, but no direct inbound SSH
-    note = "K8s nodes are in private subnets without public IPs. They can reach internet via NAT Gateway but cannot be accessed directly from internet."
+    note                 = "K8s nodes are in private subnets without public IPs. They can reach internet via NAT Gateway but cannot be accessed directly from internet."
     apiserver_private_ip = aws_instance.apiserver.private_ip
     node1_private_ip     = aws_instance.node1.private_ip
     node2_private_ip     = aws_instance.node2.private_ip
-    access_note = "To access K8s nodes, you'll need a VPN connection or another method to reach private subnets"
+    access_note          = "To access K8s nodes, you'll need a VPN connection or another method to reach private subnets"
   }
 }
 
@@ -132,9 +132,9 @@ output "ssh_connection_info" {
 output "web_server_access" {
   description = "Web server access information"
   value = {
-    http_url     = "http://${aws_eip.web_server.public_ip}"
-    https_url    = "https://${aws_eip.web_server.public_ip}"
-    static_ip    = aws_eip.web_server.public_ip
-    note         = "Web server is accessible from the internet on ports 80 (HTTP) and 443 (HTTPS)"
+    http_url  = "http://${aws_eip.web_server.public_ip}"
+    https_url = "https://${aws_eip.web_server.public_ip}"
+    static_ip = aws_eip.web_server.public_ip
+    note      = "Web server is accessible from the internet on ports 80 (HTTP) and 443 (HTTPS)"
   }
 }

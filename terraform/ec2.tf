@@ -16,11 +16,11 @@ data "aws_ami" "ubuntu" {
 
 # Public Web Server / Load Balancer
 resource "aws_instance" "web_server" {
-  ami                     = var.ami_id
-  instance_type           = var.instance_type
-  key_name                = var.key_pair_name
-  vpc_security_group_ids  = [aws_security_group.web_server.id]
-  subnet_id               = aws_subnet.public_2.id
+  ami                         = var.ami_id
+  instance_type               = var.instance_type
+  key_name                    = var.key_pair_name
+  vpc_security_group_ids      = [aws_security_group.web_server.id]
+  subnet_id                   = aws_subnet.public_2.id
   associate_public_ip_address = true
 
   root_block_device {
@@ -73,11 +73,11 @@ resource "aws_eip" "web_server" {
 
 # API Server (Master Node)
 resource "aws_instance" "apiserver" {
-  ami                     = var.ami_id
-  instance_type           = var.instance_type
-  key_name                = var.key_pair_name
-  vpc_security_group_ids  = [aws_security_group.kubernetes_nodes.id]
-  subnet_id               = aws_subnet.private_1.id
+  ami                         = var.ami_id
+  instance_type               = var.instance_type
+  key_name                    = var.key_pair_name
+  vpc_security_group_ids      = [aws_security_group.kubernetes_nodes.id]
+  subnet_id                   = aws_subnet.private_1.id
   associate_public_ip_address = false
 
   root_block_device {
@@ -118,11 +118,11 @@ resource "aws_instance" "apiserver" {
 
 # Worker Node 1
 resource "aws_instance" "node1" {
-  ami                     = var.ami_id
-  instance_type           = var.instance_type
-  key_name                = var.key_pair_name
-  vpc_security_group_ids  = [aws_security_group.kubernetes_nodes.id]
-  subnet_id               = aws_subnet.private_1.id
+  ami                         = var.ami_id
+  instance_type               = var.instance_type
+  key_name                    = var.key_pair_name
+  vpc_security_group_ids      = [aws_security_group.kubernetes_nodes.id]
+  subnet_id                   = aws_subnet.private_1.id
   associate_public_ip_address = false
 
   root_block_device {
@@ -163,11 +163,11 @@ resource "aws_instance" "node1" {
 
 # Worker Node 2
 resource "aws_instance" "node2" {
-  ami                     = var.ami_id
-  instance_type           = var.instance_type
-  key_name                = var.key_pair_name
-  vpc_security_group_ids  = [aws_security_group.kubernetes_nodes.id]
-  subnet_id               = aws_subnet.private_2.id
+  ami                         = var.ami_id
+  instance_type               = var.instance_type
+  key_name                    = var.key_pair_name
+  vpc_security_group_ids      = [aws_security_group.kubernetes_nodes.id]
+  subnet_id                   = aws_subnet.private_2.id
   associate_public_ip_address = false
 
   root_block_device {
