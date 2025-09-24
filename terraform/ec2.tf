@@ -35,7 +35,7 @@ resource "aws_instance" "web_server" {
   user_data = <<-EOF
     #!/bin/bash
     apt-get update
-    apt-get install -y curl wget vim nginx apt-transport-https ca-certificates gnupg
+    apt-get install -y curl wget vim git dnsutils nginx apt-transport-https ca-certificates gnupg
     
     # Install and start SSM agent
     snap install amazon-ssm-agent --classic
@@ -86,7 +86,7 @@ resource "aws_instance" "apiserver" {
   user_data = <<-EOF
     #!/bin/bash
     apt-get update
-    apt-get install -y curl wget vim apt-transport-https ca-certificates gnupg socat conntrack ipset
+    apt-get install -y curl wget vim git dnsutils apt-transport-https ca-certificates gnupg socat conntrack ipset
     
     # Install and start SSM agent
     snap install amazon-ssm-agent --classic
@@ -139,7 +139,7 @@ resource "aws_instance" "node1" {
   user_data = <<-EOF
     #!/bin/bash
     apt-get update
-    apt-get install -y curl wget vim apt-transport-https ca-certificates gnupg socat conntrack ipset
+    apt-get install -y curl wget vim git dnsutils apt-transport-https ca-certificates gnupg socat conntrack ipset
     
     # Install and start SSM agent
     snap install amazon-ssm-agent --classic
@@ -192,7 +192,7 @@ resource "aws_instance" "node2" {
   user_data = <<-EOF
     #!/bin/bash
     apt-get update
-    apt-get install -y curl wget vim apt-transport-https ca-certificates gnupg socat conntrack ipset
+    apt-get install -y curl wget vim git dnsutils apt-transport-https ca-certificates gnupg socat conntrack ipset
     
     # Install and start SSM agent
     snap install amazon-ssm-agent --classic
