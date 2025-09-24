@@ -1,20 +1,12 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: flask-red-ingress
-  ingressClassName: nginx
+  name: flask-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
+  ingressClassName: nginx
   rules:
-  - host: red.awanipro.com
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: flask-red-service
-            port:
-              number: 80
   - host: green.awanipro.com
     http:
       paths:
@@ -23,5 +15,15 @@ spec:
         backend:
           service:
             name: flask-green-service
+            port:
+              number: 80
+  - host: red.awanipro.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: flask-red-service
             port:
               number: 80
